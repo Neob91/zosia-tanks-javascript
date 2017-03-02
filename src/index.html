@@ -1,10 +1,17 @@
 <html>
     <head>
         <title>Tooploox Game of Tanks</title>
+        <link type="text/css" rel="stylesheet" href="css/main.css" />
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript" src="js/actions.js"></script>
+        <script type="text/javascript" src="js/game.js"></script>
     </head>
     <body>
-        <canvas id="main-canvas" width="1000" height="600"></canvas>
+        <div id="canvas-wrapper">
+            <canvas id="canvas-bg" width="1000" height="600"></canvas>
+            <canvas id="canvas-main" width="1000" height="600"></canvas>
+            <canvas id="canvas-effects" width="1000" height="600"></canvas>
+        </div>
     </body>
 </html>

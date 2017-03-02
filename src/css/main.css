@@ -1,0 +1,22 @@
+#canvas-wrapper {
+    position: relative;
+    display: inline-block;
+
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #2e6dea;
+}
+
+#canvas-main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+#canvas-effects {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
