@@ -13,11 +13,16 @@
             startPoints: [
                 {x: 7, y: 5},
                 {x: 7, y: 15},
-                {x: 15, y: 10}
+                {x: 14, y: 5},
+                {x: 16, y: 15},
+                {x: 32, y: 5},
+                {x: 32, y: 15}
             ],
             blocks: [
-                {x: 9, y: 5, h: 10, w: 2},
-                {x: 29, y: 5, h: 10, w: 2}
+                {x: 9, y: 5, h: 4, w: 2},
+                {x: 9, y: 11, h: 4, w: 2},
+                {x: 29, y: 5, h: 4, w: 2},
+                {x: 29, y: 11, h: 4, w: 2}
             ]
         };
 
@@ -56,14 +61,19 @@
             });
         });
 
-        this.state.startPoints = deepCopy(levelInfo.startPoints);
-        this.state.players = _.map(_.shuffle(controllers), function (controller, name) {
+        this.state.startPoints = _.shuffle(deepCopy(levelInfo.startPoints));
+        this.state.players = _.map(controllers, function (controller, name) {
             var startPoint = that.state.startPoints.shift(),
                 item = new Item();
 
             item.controller = controller();
             item.name = name;
+            item.color = randomColor({
+                luminosity: 'light',
+                seed: item.name
+            });
             item.health = 100;
+            item.kills = 0;
             item.ammo = 20;
 
             that.addItem(item);
@@ -88,7 +98,7 @@
             this.tick();
             this.tickIntervalId = setInterval(function () {
                 that.tick();
-            }, 750);
+            }, 350);
         }
 
         if (!this.effectsIntervalId) {
@@ -140,9 +150,11 @@
                 player.ammo += 1;
             }
 
-            //try {
+            try {
                 decision = that.processDecision(player);
-            //} catch (e) {}
+            } catch (e) {
+                console.error(e);
+            }
 
             priority = actionPriority.indexOf(decision.action);
             if (priority === -1) {
@@ -151,21 +163,21 @@
 
             decisions[priority] = decisions[priority] || [];
             decisions[priority].push(decision);
-
-            //console.log(player.controller.name + ': ' + JSON.stringify(player.location));
         });
 
         _.chain(decisions).flatten().compact().each(function (decision) {
             if (window.tanks.actions.hasOwnProperty(decision.action)) {
-                //try {
+                try {
                     window.tanks.actions[decision.action](that, decision.player, decision.data);
-                //} catch (e) {}
+                } catch (e) {
+                    console.error(e);
+                }
             }
         });
     };
 
     Game.prototype.processDecision = function (player) {
-        var s =this.getPublicState(player),
+        var s = this.getPublicState(player),
             decision = deepCopy(player.controller.getDecision(s));
 
         decision.player = player;
@@ -173,19 +185,39 @@
     };
 
     Game.prototype.getPublicState = function (player) {
-        var s = {
-            enemies: []
-        };
+        var that = this,
+            s = {
+                me: {
+                    location: player.location,
+                    health: player.health,
+                    ammo: player.ammo,
+                },
+                gridSize: this.state.gridSize,
+                blocks: [],
+                enemies: []
+            };
+
+        _.times(this.state.gridSize.x, function (n) {
+            _.times(that.state.gridSize.y, function (m) {
+                if (that.state.grid[n][m] === that.blockItem.id) {
+                    s.blocks.push({
+                        x: n,
+                        y: m
+                    });
+                }
+            });
+        });
 
         _.each(this.state.players, function (enemy) {
-            if (enemy.id !== player.id) {
+            if (enemy.id !== player.id && enemy.health) {
                 s.enemies.push({
-                    location: deepCopy(enemy.location)
+                    name: enemy.name,
+                    location: enemy.location
                 })
             }
         });
 
-        return s;
+        return deepCopy(s);
     };
 
     Game.prototype.addItem = function (item) {
@@ -285,7 +317,19 @@
 
         _.each(this.state.items, function (item, id) {
             if (item.location) {
-                ctx.fillStyle = item.health ? '#adf' : '#ddd';
+                ctx.restore();
+                ctx.save();
+
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = item.location.y ? 'bottom' : 'top';
+                ctx.fillText(
+                    item.name + ' (' + item.kills + ')',
+                    (item.location.x + 0.5) * blockSize,
+                    (item.location.y ? item.location.y : item.location.y + 1) * blockSize
+                );
+
+                ctx.fillStyle = item.health ? item.color : '#ddd';
                 ctx.fillRect(
                     item.location.x * blockSize + 1,
                     item.location.y * blockSize + 1,

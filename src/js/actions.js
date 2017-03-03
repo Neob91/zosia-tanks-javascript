@@ -24,7 +24,7 @@
         game.setLocation(player, x, y);
     };
     window.tanks.actions.fire = function (game, player, data) {
-        var angle = data.angle + Math.random() * 0.1 - 0.05,
+        var angle = data.angle + (Math.random() * 0.6 - 0.3) * Math.random(),
             shotVector = {
                 x: Math.cos(angle),
                 y: Math.sin(angle)
@@ -90,6 +90,10 @@
             if (target) {
                 if (target.health) {
                     target.health = Math.max(target.health - 5 - Math.floor(20 * Math.random()), 0);
+
+                    if (!target.health) {
+                        player.kills++;
+                    }
                 }
 
                 break;
