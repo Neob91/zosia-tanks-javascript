@@ -90,4 +90,17 @@
     window.tanks.registerController('bar', exampleController);
     window.tanks.registerController('baz', exampleController);
     window.tanks.registerController('qux', exampleController);
+
+    window.tanks.registerController('quxx', function () {
+        return {
+            getDecision: function (state) {
+                return {
+                    action: 'move',
+                    data: {
+                        direction: 'up'
+                    }
+                };
+            }
+        };
+    });
 })();

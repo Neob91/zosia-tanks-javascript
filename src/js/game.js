@@ -156,13 +156,8 @@
                 console.error(e);
             }
 
-            priority = actionPriority.indexOf(decision.action);
-            if (priority === -1) {
-                throw new Error('No priority set for action "' + decision.action + '"');
-            }
-
-            decisions[priority] = decisions[priority] || [];
-            decisions[priority].push(decision);
+            decisions[decision.priority] = decisions[decision.priority] || [];
+            decisions[decision.priority].push(decision);
         });
 
         _.chain(decisions).flatten().compact().each(function (decision) {
@@ -179,6 +174,11 @@
     Game.prototype.processDecision = function (player) {
         var s = this.getPublicState(player),
             decision = deepCopy(player.controller.getDecision(s));
+
+        decision.priority = actionPriority.indexOf(decision.action);
+        if (decision.priority === -1) {
+            throw new Error('No priority set for action "' + decision.action + '"');
+        }
 
         decision.player = player;
         return decision;
@@ -210,11 +210,18 @@
         });
 
         _.each(this.state.players, function (enemy) {
-            if (enemy.id !== player.id && enemy.health) {
-                s.enemies.push({
-                    name: enemy.name,
-                    location: enemy.location
-                })
+            if (enemy.id !== player.id) {
+                if (enemy.health) {
+                    s.enemies.push({
+                        name: enemy.name,
+                        location: enemy.location
+                    })
+                } else {
+                    s.blocks.push({
+                        x: enemy.location.x,
+                        y: enemy.location.y
+                    });
+                }
             }
         });
 
