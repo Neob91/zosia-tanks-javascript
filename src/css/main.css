@@ -2,7 +2,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.canvas-wrapper {
+#canvas-wrapper {
     position: relative;
     display: inline-block;
     vertical-align: top;
@@ -11,7 +11,7 @@ body {
     border: 1px solid #2e6dea;
 }
 
-.canvas-wrapper:before {
+#canvas-wrapper:before {
     content: '';
     display: block;
     position: absolute;
@@ -29,11 +29,11 @@ body {
     transition: 2.5s opacity;
 }
 
-.canvas-wrapper--active:before {
+.game-active #canvas-wrapper:before {
     opacity: 0.1;
 }
 
-.canvas-wrapper canvas {
+#canvas-wrapper canvas {
     margin: 2px;
 }
 
@@ -60,6 +60,14 @@ body {
     vertical-align: top;
 
     margin: 0 0 0 20px;
+}
+
+#controllers {
+    transition: 1s opacity;
+}
+
+.game-active #controllers {
+    opacity: 0.5;
 }
 
 button {

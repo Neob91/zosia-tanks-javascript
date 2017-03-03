@@ -61,7 +61,7 @@
                         );
                 }
 
-                $('.canvas-wrapper').toggleClass('canvas-wrapper--active', !!currentGame);
+                $('body').toggleClass('game-active', !!currentGame);
             };
 
         $controllers.on('click', '.controller-item', function () {
