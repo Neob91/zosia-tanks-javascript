@@ -1,7 +1,7 @@
 (function () {
     var exampleController = function () {
         var enemyName = null,
-            prevLocation = null,
+            prevLocations = [],
             moves = ['right', 'left', 'up', 'down'],
             lastMoves = [];
 
@@ -26,18 +26,17 @@
                         y: center.y - state.me.location.y
                     },
                     isStuck = (
-                        prevLocation &&
-                        prevLocation.x === state.me.location.x &&
-                        prevLocation.y === state.me.location.y
+                        prevLocations.length > 4 &&
+                        _.uniq(prevLocations.slice(-10)).length <= 3
                     ),
-                    shouldMove = enemy ? (
-                        Math.random() < 0.6 && enemyDistance > 3 ||
-                        Math.random() < 0.2 && enemyDistance > 2 ||
+                    shouldMove = isStuck || enemy ? (
+                        enemy && Math.random() < 0.6 && enemyDistance > 6 ||
+                        enemy && Math.random() < 0.2 && enemyDistance > 4 ||
                         enemyDistance > 5
                     ) : Math.abs(centerOffset.x) > 1 || Math.abs(centerOffset.y) > 1,
                     moveOffset = enemyOffset || centerOffset;
 
-                prevLocation = state.me.location;
+                prevLocations.push(state.me.location.x + ',' + state.me.location.y);
 
                 if (enemy && (!enemyName || enemy.name !== enemyName)) {
                     enemyName = enemy.name;
@@ -46,23 +45,20 @@
 
                 if (shouldMove) {
                     if (isStuck) {
-                        lastMoves.push(_.difference(moves, lastMoves.slice(-2))[0]);
-
-                        if (lastMoves.length > 3) {
-                            lastMoves.shift();
-                        }
-                    } else {
-                        lastMoves.push(
-                            Math.random() < 0.2 || Math.random() < 0.9 && moveOffset.y === 0 ?
-                                (moveOffset.x > 0 ? 'right' : 'left')
-                                : (moveOffset.y > 0 ? 'down' : 'up')
-                        );
+                        return {
+                            action: 'move',
+                            data: {
+                                direction: _.sample(moves)
+                            }
+                        };
                     }
 
                     return {
                         action: 'move',
                         data: {
-                            direction: lastMoves.slice(-1)[0]
+                            direction: moveOffset.y === 0 ?
+                                (moveOffset.x > 0 ? 'right' : 'left')
+                                : (moveOffset.y > 0 ? 'down' : 'up')
                         }
                     };
                 }

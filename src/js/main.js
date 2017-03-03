@@ -1,6 +1,8 @@
 (function () {
     var registeredControllers = {},
+        registeredLevels = {},
         activeControllers = {},
+        activeLevelName = null,
         currentGame = null;
 
     window.deepCopy = function (data) {
@@ -9,6 +11,7 @@
 
     document.addEventListener('DOMContentLoaded', function (e) {
         var $controllers = $('#controllers'),
+            $levels = $('#levels'),
             $buttons = $('#buttons'),
             renderControllers = function () {
                 $controllers.html('');
@@ -26,15 +29,21 @@
                     $controllers.append($controllerItem);
                 });
             },
-            toggleController = function (name) {
-                if (activeControllers.hasOwnProperty(name)) {
-                    delete activeControllers[name];
-                } else {
-                    activeControllers[name] = registeredControllers[name];
-                }
+            renderLevels = function () {
+                $levels.html('');
+                _.each(registeredLevels, function (levelInfo, name) {
+                    var $levelItem = (
+                            $('<div class="level-item" />')
+                                .attr('data-name', name)
+                                .text(name)
+                        );
 
-                renderControllers();
-                renderButtons();
+                    if (activeLevelName === name) {
+                        $levelItem.addClass('level-item--active');
+                    }
+
+                    $levels.append($levelItem);
+                });
             },
             renderButtons = function () {
                 $buttons.html('');
@@ -54,7 +63,7 @@
                                 $('<button />').text('Resume').addClass('btn-resume')
                             );
                     }
-                } else if (!_.isEmpty(activeControllers)) {
+                } else if (!_.isEmpty(activeControllers) && activeLevelName) {
                     $buttons
                         .append(
                             $('<button />').text('Start').addClass('btn-start')
@@ -62,6 +71,22 @@
                 }
 
                 $('body').toggleClass('game-active', !!currentGame);
+            },
+            toggleController = function (name) {
+                if (activeControllers.hasOwnProperty(name)) {
+                    delete activeControllers[name];
+                } else {
+                    activeControllers[name] = registeredControllers[name];
+                }
+
+                renderControllers();
+                renderButtons();
+            },
+            switchLevel = function (name) {
+                activeLevelName = name;
+
+                renderLevels();
+                renderButtons();
             };
 
         $controllers.on('click', '.controller-item', function () {
@@ -70,8 +95,17 @@
             }
         });
 
+        $levels.on('click', '.level-item', function () {
+            if (!currentGame) {
+                switchLevel($(this).attr('data-name'));
+                renderButtons();
+            }
+        });
+
         $buttons.on('click', '.btn-start', function () {
-            currentGame = new window.tanks.Game(activeControllers);
+            currentGame = new window.tanks.Game(
+                registeredLevels[activeLevelName], activeControllers
+            );
             currentGame.start();
             renderButtons();
         });
@@ -93,12 +127,16 @@
         });
 
         renderControllers();
+        renderLevels();
         renderButtons();
     });
 
     window.tanks = {};
     window.tanks.registerController = function (name, controller) {
         registeredControllers[name] = controller;
+    };
+    window.tanks.registerLevel = function (name, levelInfo) {
+        registeredLevels[name] = levelInfo;
     };
 
 })();

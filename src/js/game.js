@@ -4,27 +4,7 @@
         actionPriority = [
             'move',
             'fire'
-        ],
-        levelInfo = {
-            gridSize: {
-                x: 40,
-                y: 20
-            },
-            startPoints: [
-                {x: 7, y: 5},
-                {x: 7, y: 15},
-                {x: 14, y: 5},
-                {x: 16, y: 15},
-                {x: 32, y: 5},
-                {x: 32, y: 15}
-            ],
-            blocks: [
-                {x: 9, y: 5, h: 4, w: 2},
-                {x: 9, y: 11, h: 4, w: 2},
-                {x: 29, y: 5, h: 4, w: 2},
-                {x: 29, y: 11, h: 4, w: 2}
-            ]
-        };
+        ];
 
     var Item = function (opts) {
         opts = opts || {};
@@ -33,7 +13,7 @@
         this.immovable = opts.immovable || false;
     };
 
-    var Game = function (controllers) {
+    var Game = function (levelInfo, controllers) {
         var that = this;
 
         if (controllers.length < levelInfo.startPoints.length) {

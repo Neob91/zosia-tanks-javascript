@@ -63,10 +63,19 @@ body {
 }
 
 #controllers {
+    margin: 0 0 10px;
     transition: 1s opacity;
 }
 
+#levels {
+    margin: 0 0 10px;
+}
+
 .game-active #controllers {
+    opacity: 0.5;
+}
+
+.game-active #levels {
     opacity: 0.5;
 }
 
@@ -97,10 +106,38 @@ button:last-child {
     border: 1px solid #aaa;
     border-radius: 3px;
     background-color: #ddd;
+    cursor: pointer;
 }
 
 .controller-item--active {
     color: #222;
     border-color: #30c0ff;
     background-color: #d1ecf9;
+}
+
+.controller-item:last-child {
+    margin-bottom: 0;
+}
+
+.level-item {
+    display: inline-block;
+    margin: 0 10px 0 0;
+    padding: 10px;
+
+    color: #888;
+    font-size: 14px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    background-color: #ddd;
+    cursor: pointer;
+}
+
+.level-item--active {
+    color: #222;
+    border-color: #30c0ff;
+    background-color: #d1ecf9;
+}
+
+.level-item:last-child {
+    margin-right: 0;
 }
