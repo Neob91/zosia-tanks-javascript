@@ -192,6 +192,7 @@
                     health: player.health,
                     ammo: player.ammo,
                 },
+                roundNumber: this.state.roundNumber,
                 gridSize: this.state.gridSize,
                 blocks: [],
                 enemies: []
@@ -320,14 +321,16 @@
                 ctx.restore();
                 ctx.save();
 
-                ctx.font = '14px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = item.location.y ? 'bottom' : 'top';
-                ctx.fillText(
-                    item.name + ' (' + item.kills + ')',
-                    (item.location.x + 0.5) * blockSize,
-                    (item.location.y ? item.location.y : item.location.y + 1) * blockSize
-                );
+                if (item.name) {
+                    ctx.font = '9px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = item.location.y ? 'bottom' : 'top';
+                    ctx.fillText(
+                        item.name + ' (' + item.kills + ')',
+                        (item.location.x + 0.5) * blockSize,
+                        (item.location.y ? item.location.y : item.location.y + 1) * blockSize
+                    );
+                }
 
                 ctx.fillStyle = item.health ? item.color : '#ddd';
                 ctx.fillRect(
