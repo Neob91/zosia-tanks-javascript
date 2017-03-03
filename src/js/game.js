@@ -16,7 +16,7 @@
     var Game = function (levelInfo, controllers) {
         var that = this;
 
-        if (controllers.length < levelInfo.startPoints.length) {
+        if (controllers.length > levelInfo.startPoints.length) {
             throw new Error('There are not enough start points!');
         }
 
@@ -136,8 +136,10 @@
                 console.error(e);
             }
 
-            decisions[decision.priority] = decisions[decision.priority] || [];
-            decisions[decision.priority].push(decision);
+            if (decision) {
+                decisions[decision.priority] = decisions[decision.priority] || [];
+                decisions[decision.priority].push(decision);
+            }
         });
 
         _.chain(decisions).flatten().compact().each(function (decision) {

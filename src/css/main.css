@@ -19,7 +19,7 @@ body {
     left: 0;
     bottom: 0;
     right: 0;
-    z-index: 0;
+    z-index: -1;
 
     background-image: url(../img/logo.png);
     background-size: 240px;
