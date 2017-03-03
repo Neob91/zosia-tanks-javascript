@@ -35,25 +35,43 @@
             },
             shot = {};
 
-        if (Math.abs(shotVector.x) > Math.abs(shotVector.y)) {
-            shotVector.y *= (1 / shotVector.x);
-            shotVector.x = 1;
-        } else {
-            shotVector.x *= (1 / shotVector.y);
-            shotVector.y = 1;
-        }
-
-        shotLocation.x += 0.5 + shotVector.x * 0.5;
-        shotLocation.y += 0.5 + shotVector.y * 0.5;
+        shotLocation.x += 0.5;
+        shotLocation.y += 0.5;
 
         shot.start = deepCopy(shotLocation);
 
         while (true) {
-            var x = Math.floor(shotLocation.x),
-                y = Math.floor(shotLocation.y),
+            var xFract = shotLocation.x - Math.floor(shotLocation.x),
+                yFract = shotLocation.y - Math.floor(shotLocation.y),
+                xStep,
+                yStep,
+                step,
+                step2,
+                x,
+                y,
                 target;
 
-            console.log('Fire: ' + x + ', ' + y);
+            if (shotVector.x > 0) {
+                xFract = 1 - xFract;
+            }
+
+            if (shotVector.y > 0) {
+                yFract = 1 - yFract;
+            }
+
+            xStep = xFract / Math.abs(shotVector.x);
+            yStep = yFract / Math.abs(shotVector.y);
+
+            step = Math.min(xStep, yStep);
+            step2 = Math.max(xStep, yStep) - step;
+
+            step = step + (step2 > 0.3 ? 0.2 : step2 * 0.5);
+
+            shotLocation.x += shotVector.x * step;
+            shotLocation.y += shotVector.y * step;
+
+            x = Math.floor(shotLocation.x);
+            y = Math.floor(shotLocation.y);
 
             if (!game.isLocationValid(x, y)) {
                 break;
@@ -68,13 +86,10 @@
 
                 break;
             }
-
-            shotLocation.x += shotVector.x;
-            shotLocation.y += shotVector.y;
         }
 
         shot.end = deepCopy(shotLocation);
-        game.addEffect('shot', shot, 100);
+        game.addEffect('shot', shot, 150);
     };
 
 })();

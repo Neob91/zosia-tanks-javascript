@@ -25,7 +25,7 @@ window.tanks.registerController('foo', function () {
             return {
                 action: 'fire',
                 data: {
-                    angle: Math.PI * 0.5
+                    angle: Math.PI * 0.25
                 }
             };
         }

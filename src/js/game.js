@@ -47,10 +47,13 @@
             that.state.grid.push([]);
         });
 
+        this.blockItem = new Item();
+        this.addItem(this.blockItem);
+
         _.each(levelInfo.blocks, function (block) {
             _.times(block.w, function (n) {
                 _.times(block.h, function (m) {
-                    that.state.grid[block.x + n][block.y + m] = 'b';
+                    that.state.grid[block.x + n][block.y + m] = that.blockItem.id;
                 });
             });
         });
@@ -91,7 +94,7 @@
         if (!this.effectsIntervalId) {
             this.effectsIntervalId = setInterval(function () {
                 that.renderEffects();
-            }, 50);
+            }, 20);
         }
     };
 
@@ -231,7 +234,7 @@
 
         _.times(this.state.gridSize.x, function (n) {
             _.times(that.state.gridSize.y, function (m) {
-                if (that.state.grid[n][m] === 'b') {
+                if (that.state.grid[n][m] === that.blockItem.id) {
                     ctx.fillRect(
                         n * blockSize,
                         m * blockSize,
@@ -252,13 +255,15 @@
         );
 
         _.each(this.state.items, function (item, id) {
-            ctx.fillStyle = item.health ? '#adf' : '#ddd';
-            ctx.fillRect(
-                item.location.x * blockSize,
-                item.location.y * blockSize,
-                visibleBlockSize,
-                visibleBlockSize
-            );
+            if (item.location) {
+                ctx.fillStyle = item.health ? '#adf' : '#ddd';
+                ctx.fillRect(
+                    item.location.x * blockSize,
+                    item.location.y * blockSize,
+                    visibleBlockSize,
+                    visibleBlockSize
+                );
+            }
         });
     };
 
@@ -272,11 +277,9 @@
         );
 
         this.state.effects = _.filter(this.state.effects, function (effect) {
-            var lifespan = (
-                (effect.expire > ts) ? (effect.expire - effect.created) / (effect.expire - ts) : 0
-            );
+            var lifespan = (effect.expire - ts) / (effect.expire - effect.created);
 
-            if (!lifespan) {
+            if (lifespan <= 0) {
                 return false;
             }
 
@@ -290,7 +293,7 @@
                     Math.floor(effect.data.end.x * blockSize),
                     Math.floor(effect.data.end.y * blockSize)
                 );
-                ctx.strokeStyle = 'rgba(240, 192, 0, ' + Math.floor(lifespan * 255) + ')';
+                ctx.strokeStyle = 'rgba(240, 192, 0, ' + Math.floor(lifespan * 100) / 100 + ')';
                 ctx.stroke();
             } else {
                 return false;
