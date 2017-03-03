@@ -1,10 +1,18 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 #canvas-wrapper {
     position: relative;
     display: inline-block;
+    vertical-align: top;
 
-    padding: 10px;
     border-radius: 5px;
     border: 1px solid #2e6dea;
+}
+
+#canvas-wrapper canvas {
+    margin: 2px;
 }
 
 #canvas-main {
@@ -19,4 +27,44 @@
     top: 0;
     left: 0;
     z-index: 1;
+}
+
+#right-menu {
+    display: inline-block;
+    vertical-align: top;
+}
+
+button {
+    display: block;
+    width: 140px;
+    height: 35px;
+    margin: 0 0 10px;
+
+    color: #fff;
+    font-size: 14px;
+    background-color: #2096f3;
+    border: 1px solid #30c0ff;
+    border-radius: 3px;
+}
+
+button:last-child {
+    margin-bottom: 0;
+}
+
+.controller-item {
+    width: 200px;
+    margin: 0 0 10px;
+    padding: 10px;
+
+    color: #888;
+    font-size: 14px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    background-color: #ddd;
+}
+
+.controller-item--active {
+    color: #222;
+    border-color: #30c0ff;
+    background-color: #d1ecf9;
 }

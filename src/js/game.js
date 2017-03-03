@@ -1,6 +1,5 @@
 (function () {
     var blockSize = 20,
-        visibleBlockSize = blockSize - 2,
         idCount = 1,
         actionPriority = [
             'move',
@@ -83,6 +82,7 @@
 
         this.setupCanvas();
         this.renderBackground();
+        this.inProgress = true;
 
         if (!this.tickIntervalId) {
             this.tick();
@@ -99,6 +99,8 @@
     };
 
     Game.prototype.pause = function () {
+        this.inProgress = false;
+
         if (this.tickIntervalId) {
             clearInterval(this.tickIntervalId);
             this.tickIntervalId = null;
@@ -108,6 +110,11 @@
             clearInterval(this.effectsIntervalId);
             this.effectsIntervalId = null;
         }
+    };
+
+    Game.prototype.stop = function () {
+        this.pause();
+        this.setupCanvas();
     };
 
     Game.prototype.tick = function () {
@@ -236,10 +243,10 @@
             _.times(that.state.gridSize.y, function (m) {
                 if (that.state.grid[n][m] === that.blockItem.id) {
                     ctx.fillRect(
-                        n * blockSize,
-                        m * blockSize,
-                        visibleBlockSize,
-                        visibleBlockSize
+                        n * blockSize + 1,
+                        m * blockSize + 1,
+                        blockSize - 2,
+                        blockSize - 2
                     );
                 }
             });
@@ -258,10 +265,10 @@
             if (item.location) {
                 ctx.fillStyle = item.health ? '#adf' : '#ddd';
                 ctx.fillRect(
-                    item.location.x * blockSize,
-                    item.location.y * blockSize,
-                    visibleBlockSize,
-                    visibleBlockSize
+                    item.location.x * blockSize + 1,
+                    item.location.y * blockSize + 1,
+                    blockSize - 2,
+                    blockSize - 2
                 );
             }
         });
