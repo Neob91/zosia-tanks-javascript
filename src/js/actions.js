@@ -35,10 +35,14 @@
             },
             shot = {};
 
+        if (player.ammo <= 0) {
+            return;
+        }
+
+        player.ammo--;
+
         shotLocation.x += 0.5;
         shotLocation.y += 0.5;
-
-        shot.start = deepCopy(shotLocation);
 
         while (true) {
             var xFract = shotLocation.x - Math.floor(shotLocation.x),
@@ -70,6 +74,10 @@
             shotLocation.x += shotVector.x * step;
             shotLocation.y += shotVector.y * step;
 
+            if (!shot.start) {
+                shot.start = deepCopy(shotLocation);
+            }
+
             x = Math.floor(shotLocation.x);
             y = Math.floor(shotLocation.y);
 
@@ -81,7 +89,7 @@
 
             if (target) {
                 if (target.health) {
-                    target.health = Math.max(target.health - 30, 0);
+                    target.health = Math.max(target.health - 5 - Math.floor(20 * Math.random()), 0);
                 }
 
                 break;
@@ -90,6 +98,7 @@
 
         shot.end = deepCopy(shotLocation);
         game.addEffect('shot', shot, 150);
+        game.addEffect('hit', shot.end, 300);
     };
 
 })();

@@ -2,7 +2,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#canvas-wrapper {
+.canvas-wrapper {
     position: relative;
     display: inline-block;
     vertical-align: top;
@@ -11,27 +11,55 @@ body {
     border: 1px solid #2e6dea;
 }
 
-#canvas-wrapper canvas {
+.canvas-wrapper:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 0;
+
+    background-image: url(../img/logo.png);
+    background-size: 240px;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    transition: 2.5s opacity;
+}
+
+.canvas-wrapper--active:before {
+    opacity: 0.1;
+}
+
+.canvas-wrapper canvas {
     margin: 2px;
+}
+
+#canvas-bg {
+    z-index: 1;
 }
 
 #canvas-main {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 0;
+    z-index: 2;
 }
 
 #canvas-effects {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1;
+    z-index: 3;
 }
 
 #right-menu {
     display: inline-block;
     vertical-align: top;
+
+    margin: 0 0 0 20px;
 }
 
 button {

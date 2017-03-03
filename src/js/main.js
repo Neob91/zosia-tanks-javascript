@@ -34,6 +34,7 @@
                 }
 
                 renderControllers();
+                renderButtons();
             },
             renderButtons = function () {
                 $buttons.html('');
@@ -53,16 +54,20 @@
                                 $('<button />').text('Resume').addClass('btn-resume')
                             );
                     }
-                } else {
+                } else if (!_.isEmpty(activeControllers)) {
                     $buttons
                         .append(
                             $('<button />').text('Start').addClass('btn-start')
                         );
                 }
+
+                $('.canvas-wrapper').toggleClass('canvas-wrapper--active', !!currentGame);
             };
 
         $controllers.on('click', '.controller-item', function () {
-            toggleController($(this).attr('data-name'));
+            if (!currentGame) {
+                toggleController($(this).attr('data-name'));
+            }
         });
 
         $buttons.on('click', '.btn-start', function () {
@@ -104,7 +109,7 @@ window.tanks.registerController('foo', function () {
             return {
                 action: 'fire',
                 data: {
-                    angle: Math.PI * 0.25
+                    angle: Math.PI * 0.5
                 }
             };
         }

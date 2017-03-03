@@ -16,8 +16,8 @@
                 {x: 15, y: 10}
             ],
             blocks: [
-                {x: 10, y: 5, h: 10, w: 2},
-                {x: 30, y: 5, h: 10, w: 2}
+                {x: 9, y: 5, h: 10, w: 2},
+                {x: 29, y: 5, h: 10, w: 2}
             ]
         };
 
@@ -37,8 +37,7 @@
 
         this.state = {};
         this.state.items = {};
-
-        this.publicState = {};
+        this.state.roundNumber = 0;
 
         this.state.gridSize = deepCopy(levelInfo.gridSize);
         this.state.grid = [];
@@ -58,13 +57,14 @@
         });
 
         this.state.startPoints = deepCopy(levelInfo.startPoints);
-        this.state.players = _.map(controllers, function (controller, name) {
+        this.state.players = _.map(_.shuffle(controllers), function (controller, name) {
             var startPoint = that.state.startPoints.shift(),
                 item = new Item();
 
             item.controller = controller();
             item.name = name;
             item.health = 100;
+            item.ammo = 20;
 
             that.addItem(item);
 
@@ -120,6 +120,8 @@
     Game.prototype.tick = function () {
         this.processDecisions();
         this.renderMain();
+
+        this.state.roundNumber += 1;
     };
 
     Game.prototype.processDecisions = function () {
@@ -132,6 +134,10 @@
 
             if (!player.health) {
                 return;
+            }
+
+            if (that.state.roundNumber % 4 === 0) {
+                player.ammo += 1;
             }
 
             //try {
@@ -159,11 +165,27 @@
     };
 
     Game.prototype.processDecision = function (player) {
-        var s = deepCopy(this.publicState),
+        var s =this.getPublicState(player),
             decision = deepCopy(player.controller.getDecision(s));
 
         decision.player = player;
         return decision;
+    };
+
+    Game.prototype.getPublicState = function (player) {
+        var s = {
+            enemies: []
+        };
+
+        _.each(this.state.players, function (enemy) {
+            if (enemy.id !== player.id) {
+                s.enemies.push({
+                    location: deepCopy(enemy.location)
+                })
+            }
+        });
+
+        return s;
     };
 
     Game.prototype.addItem = function (item) {
@@ -290,20 +312,39 @@
                 return false;
             }
 
-            if (effect.name === 'shot') {
-                ctx.beginPath();
-                ctx.moveTo(
-                    Math.floor(effect.data.start.x * blockSize),
-                    Math.floor(effect.data.start.y * blockSize)
-                );
-                ctx.lineTo(
-                    Math.floor(effect.data.end.x * blockSize),
-                    Math.floor(effect.data.end.y * blockSize)
-                );
-                ctx.strokeStyle = 'rgba(240, 192, 0, ' + Math.floor(lifespan * 100) / 100 + ')';
-                ctx.stroke();
-            } else {
-                return false;
+            ctx.restore();
+            ctx.save();
+
+            switch (effect.name) {
+                case 'shot':
+                    ctx.beginPath();
+                    ctx.moveTo(
+                        Math.floor(effect.data.start.x * blockSize),
+                        Math.floor(effect.data.start.y * blockSize)
+                    );
+                    ctx.lineTo(
+                        Math.floor(effect.data.end.x * blockSize),
+                        Math.floor(effect.data.end.y * blockSize)
+                    );
+                    ctx.strokeStyle = 'rgba(255, 165, 0, ' + Math.floor(lifespan * 100) / 100 + ')';
+                    ctx.stroke();
+                    break;
+                case 'hit':
+                    ctx.beginPath();
+                    ctx.arc(
+                        Math.floor(effect.data.x * blockSize),
+                        Math.floor(effect.data.y * blockSize),
+                        (1.2 - lifespan) * blockSize * 0.5,
+                        0, 2 * Math.PI, false
+                    );
+                    ctx.fillStyle = 'rgba(255, 165, 0, ' + Math.floor(lifespan * 100) / 100 + ')';
+                    ctx.fill();
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = '#f22613';
+                    ctx.stroke();
+                    break;
+                default:
+                    return false;
             }
 
             return true;
