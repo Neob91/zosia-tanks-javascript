@@ -298,7 +298,8 @@
     };
 
     Game.prototype.renderMain = function () {
-        var canvas = document.getElementById('canvas-main'),
+        var that = this,
+            canvas = document.getElementById('canvas-main'),
             ctx = canvas.getContext('2d');
 
         ctx.clearRect(
@@ -312,7 +313,9 @@
 
                 if (item.name) {
                     ctx.font = '9px Arial';
-                    ctx.textAlign = 'center';
+                    ctx.textAlign = item.location.x ?
+                        item.location.x === that.state.gridSize.x ? 'right' : 'center'
+                        : 'left';
                     ctx.textBaseline = item.location.y ? 'bottom' : 'top';
                     ctx.fillText(
                         item.name + ' (' + item.kills + ')',
