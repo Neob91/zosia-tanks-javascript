@@ -2,7 +2,7 @@
 
 ## Description
 I was asked one day to fill in for a colleague, and go to a Zosia conference to lead JS workshops.
-The theme was supposed to be JS tank fights - so I created a simple game (in older ECMAScript, for quicker setup), where the participants would write their own tank behavior logic, and then compete.
+The theme was to be a tank fight - so I pulled an all-nigher, and created a simple game (in older ECMAScript, for quicker setup), where the participants would write their own tank behavior logic, and then compete.
 
 ## Rules
 - Every tank can perform one action per round - fire its weapon or move in one of 4 directions.
